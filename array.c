@@ -51,6 +51,7 @@ bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, size_t memorySize
     //printf("Copying... Size: %llu\n", memorySize);
 
     memcpy(memoryBlock->address, memory, memorySize);
+    return true;
   } else {
     return false;
   }
