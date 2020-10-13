@@ -13,10 +13,10 @@
 
 typedef struct {
   void* address;
-  size_t size;
+  uint64_t size;
 } MemoryBlock;
 
-MemoryBlock* createMemoryBlock(size_t size) {
+MemoryBlock* createMemoryBlock(uint64_t size) {
   MemoryBlock* newMemoryBlock = (MemoryBlock*) calloc(1, sizeof(MemoryBlock));
   newMemoryBlock->address = calloc(1, size);
   newMemoryBlock->size = size;
@@ -42,7 +42,7 @@ void freeMemoryBlock(MemoryBlock* memoryBlock) {
   free(memoryBlock);
 }
 
-bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, size_t memorySize) {
+bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, uint64_t memorySize) {
   if(memoryBlock) {
     freeAllocatedMemoryBlockSpace(memoryBlock);
     memoryBlock->address = calloc(1, memorySize);
@@ -58,11 +58,11 @@ bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, size_t memorySize
 }
 
 typedef struct {
-  size_t blockSize;
+  uint64_t blockSize;
   MemoryBlock* memoryBlocks;
 } Block;
 
-Block* createBlock(size_t blockSize) {
+Block* createBlock(uint64_t blockSize) {
   Block* newBlock = (Block*) calloc(1, sizeof(Block));
   newBlock->blockSize = blockSize;
   newBlock->memoryBlocks = (MemoryBlock*) calloc(blockSize, sizeof(MemoryBlock));
@@ -81,9 +81,9 @@ void freeBlock(Block* block) {
 }
 
 typedef struct {
-  size_t listSize;
+  uint64_t listSize;
   Block** blocks;
-  size_t totalBlocks;
+  uint64_t totalBlocks;
 } List;
 
 List* createList() {
@@ -97,8 +97,8 @@ List* createList() {
 
 void freeBlockArray(List* list) {
   if(list) {
-    size_t totalBlocks = list->totalBlocks;
-    for(size_t i = 0; i < totalBlocks; ++i) {
+    uint64_t totalBlocks = list->totalBlocks;
+    for(uint64_t i = 0; i < totalBlocks; ++i) {
       freeBlock(list->blocks[i]);
     }
     free(list->blocks);
@@ -126,18 +126,18 @@ void printListDetails(List* list) {
   }
 }
 
-void resizeBlockArray(List* list, size_t newSize) {
+void resizeBlockArray(List* list, uint64_t newSize) {
   if(list) {
     Block** newBlocks = (Block**) calloc(newSize, sizeof(Block*));
-    size_t copySize = list->totalBlocks <= newSize ? list->totalBlocks : newSize;
+    uint64_t copySize = list->totalBlocks <= newSize ? list->totalBlocks : newSize;
     
-    for(size_t i = 0; i < copySize; ++i) {
+    for(uint64_t i = 0; i < copySize; ++i) {
       newBlocks[i] = list->blocks[i];
     }
     
     free(list->blocks);
     
-    newBlocks[newSize - 1] = createBlock((size_t)pow(2, newSize - 1));
+    newBlocks[newSize - 1] = createBlock((uint64_t)pow(2, newSize - 1));
     
     list->blocks = newBlocks;
     list->totalBlocks = newSize;
@@ -148,13 +148,13 @@ double log2(double x) {
   return log(x) / log(2);
 }
 
-void listInsert(List* list, void* data, size_t dataSize) {
+void listInsert(List* list, void* data, uint64_t dataSize) {
   if(list) {
 //    printf("Data Size: %llu\n", dataSize);
-//    printf("Capacity: %llu\n", (size_t)pow(2, list->totalBlocks - 1));
+//    printf("Capacity: %llu\n", (uint64_t)pow(2, list->totalBlocks - 1));
     
     if(list->blocks) {
-      if(list->listSize == (size_t)pow(2, list->totalBlocks - 1)) {
+      if(list->listSize == (uint64_t)pow(2, list->totalBlocks - 1)) {
         resizeBlockArray(list, list->totalBlocks + 1);
       }
     } else {
@@ -164,8 +164,8 @@ void listInsert(List* list, void* data, size_t dataSize) {
     ++list->listSize;
     
     // Some factor work.
-    size_t index = log2(list->listSize);
-    size_t memoryBlockIndex = list->listSize - pow(2, index);
+    uint64_t index = log2(list->listSize);
+    uint64_t memoryBlockIndex = list->listSize - pow(2, index);
     
     //printListDetails(list);
     
@@ -178,13 +178,13 @@ void listInsert(List* list, void* data, size_t dataSize) {
   }
 }
 
-MemoryBlock* listGet(List* list, size_t elemIndex) {
+MemoryBlock* listGet(List* list, uint64_t elemIndex) {
   if(list) {
     if(elemIndex < list->listSize) {
       ++elemIndex;
       
-      size_t index = log2(elemIndex);
-      size_t memoryBlockIndex = elemIndex - pow(2, index);
+      uint64_t index = log2(elemIndex);
+      uint64_t memoryBlockIndex = elemIndex - pow(2, index);
       
       return &list->blocks[index]->memoryBlocks[memoryBlockIndex];
     }
@@ -194,8 +194,8 @@ MemoryBlock* listGet(List* list, size_t elemIndex) {
 
 void listRemove(List* list) {
   if(list && list->listSize > 0) {
-    size_t index = log2(list->listSize);
-    size_t memoryBlockIndex = list->listSize - pow(2, index);
+    uint64_t index = log2(list->listSize);
+    uint64_t memoryBlockIndex = list->listSize - pow(2, index);
     
     MemoryBlock* end = listGet(list, list->listSize - 1);
     freeAllocatedMemoryBlockSpace(end);
@@ -213,7 +213,7 @@ void listRemove(List* list) {
 */
 typedef struct {
   char name[128];
-  size_t age, weight;
+  uint64_t age, weight;
 } Student;
 
 void printStudent(Student* student) {
