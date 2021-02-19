@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 3.0.0)
 project(FunDataStructures VERSION 0.1.0)
 
 include(CTest)
-enable_testing()
-
 include_directories(include/)
-add_executable(FunDataStructures test.c)
+
+FILE(GLOB CSources *.c)
+ADD_EXECUTABLE(FunDataStructures ${CSources})
+
+target_link_libraries(FunDataStructures m)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

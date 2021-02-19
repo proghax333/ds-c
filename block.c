@@ -1,5 +1,5 @@
 
-#include <include/block.h>
+#include <block.h>
 
 Block* createBlock(uint64_t blockSize) {
   Block* newBlock = (Block*) calloc(1, sizeof(Block));
