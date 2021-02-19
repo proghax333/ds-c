@@ -1,17 +1,7 @@
 
-#if !defined(__LIST_H)
-#define __LIST_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "block.h"
-
-typedef struct {
-  uint64_t listSize;
-  Block** blocks;
-  uint64_t totalBlocks;
-} List;
+#include <block.h>
+#include <list.h>
+#include <utils.h>
 
 List* createList() {
   List* newList = (List*) calloc(1, sizeof(List));
@@ -132,5 +122,3 @@ void listRemove(List* list) {
     --list->listSize;
   }
 }
-
-#endif

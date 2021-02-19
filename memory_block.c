@@ -1,16 +1,11 @@
 
-#if !defined(__MEMORY_BLOCK_H)
-#define __MEMORY_BLOCK_H
 
 #include <string.h>
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdbool.h>
 
-typedef struct {
-  void* address;
-  uint64_t size;
-} MemoryBlock;
+#include <memory_block.h>
 
 MemoryBlock* createMemoryBlock(uint64_t size) {
   MemoryBlock* newMemoryBlock = (MemoryBlock*) calloc(1, sizeof(MemoryBlock));
@@ -50,5 +45,3 @@ bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, uint64_t memorySi
     return false;
   }
 }
-
-#endif

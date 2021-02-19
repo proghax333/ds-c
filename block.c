@@ -1,14 +1,5 @@
 
-#if !defined(__BLOCK_H)
-#define __BLOCK_H
-
-#include <stdlib.h>
-#include "memory_block.h"
-
-typedef struct {
-  uint64_t blockSize;
-  MemoryBlock* memoryBlocks;
-} Block;
+#include <include/block.h>
 
 Block* createBlock(uint64_t blockSize) {
   Block* newBlock = (Block*) calloc(1, sizeof(Block));
@@ -27,5 +18,3 @@ void freeBlock(Block* block) {
   }
   free(block);
 }
-
-#endif

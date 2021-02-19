@@ -1,7 +1,7 @@
 
 #include <stdio.h>
-#include "list.h"
-#include "utils.h"
+#include <list.h>
+#include <utils.h>
 
 /*
   Test Struct
