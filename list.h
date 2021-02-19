@@ -1,84 +1,11 @@
 
+#if !defined(__LIST_H)
+#define __LIST_H
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <stdbool.h>
-#include <stdint.h>
-
-#include <string.h>
-
 #include <math.h>
-
-//#include "leak_detector_c.h"
-
-typedef struct {
-  void* address;
-  uint64_t size;
-} MemoryBlock;
-
-MemoryBlock* createMemoryBlock(uint64_t size) {
-  MemoryBlock* newMemoryBlock = (MemoryBlock*) calloc(1, sizeof(MemoryBlock));
-  newMemoryBlock->address = calloc(1, size);
-  newMemoryBlock->size = size;
-
-  return newMemoryBlock;
-}
-
-void defaultBlock(MemoryBlock* memoryBlock) {
-  if(memoryBlock) {
-    memoryBlock->address = NULL;
-    memoryBlock->size = 0;
-  }
-}
-
-void freeAllocatedMemoryBlockSpace(MemoryBlock* memoryBlock) {
-  if(memoryBlock != NULL) {
-    free(memoryBlock->address);
-  }
-}
-
-void freeMemoryBlock(MemoryBlock* memoryBlock) {
-  freeAllocatedMemoryBlockSpace(memoryBlock);
-  free(memoryBlock);
-}
-
-bool copyMemoryToBlock(MemoryBlock* memoryBlock, void* memory, uint64_t memorySize) {
-  if(memoryBlock) {
-    freeAllocatedMemoryBlockSpace(memoryBlock);
-    memoryBlock->address = calloc(1, memorySize);
-    memoryBlock->size = memorySize;
-    
-    //printf("Copying... Size: %llu\n", memorySize);
-
-    memcpy(memoryBlock->address, memory, memorySize);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-typedef struct {
-  uint64_t blockSize;
-  MemoryBlock* memoryBlocks;
-} Block;
-
-Block* createBlock(uint64_t blockSize) {
-  Block* newBlock = (Block*) calloc(1, sizeof(Block));
-  newBlock->blockSize = blockSize;
-  newBlock->memoryBlocks = (MemoryBlock*) calloc(blockSize, sizeof(MemoryBlock));
-  
-  return newBlock;
-}
-
-void freeBlock(Block* block) {
-  if(block && block->memoryBlocks) {
-    for(int i = 0; i < block->blockSize; ++i) {
-      freeAllocatedMemoryBlockSpace(&block->memoryBlocks[i]);
-    }
-    free(block->memoryBlocks);
-  }
-  free(block);
-}
+#include "block.h"
 
 typedef struct {
   uint64_t listSize;
@@ -206,62 +133,4 @@ void listRemove(List* list) {
   }
 }
 
-#define cast(type, address) ((type)address)
-
-/*
-  Test Struct
-*/
-typedef struct {
-  char name[128];
-  uint64_t age, weight;
-} Student;
-
-void printStudent(Student* student) {
-  if(student) {
-    printf(
-      "Name: %s\n"
-      "Age: %llu\n"
-      "Weight: %llu\n"
-      , student->name
-      , student->age
-      , student->weight);
-  }
-}
-
-/*
-  MAIN FUNCTION!
-  
-  THIS IS WHERE THE PROGRAM GETS STARTED BOIS!
-*/
-int main() {
-  //atexit(report_mem_leak);
-  List* list = createList();
-  
-  // Insert an integer
-  int number = 10;
-  listInsert(list, &number, sizeof(number));
-  
-  // Insert a string
-  char* string = "Hello World!";
-  listInsert(list, string, strlen(string) + 1);
-  
-  // Insert a double
-  double pi = 3.14159;
-  listInsert(list, &pi, sizeof(pi));
-  
-  // Insert a student
-  Student s = {
-    .name = "John Doe",
-    .age = 19,
-    .weight = 80
-  };
-  listInsert(list, &s, sizeof(s));
-  
-  printf("int = %d\n", *cast(int*, listGet(list, 0)->address));
-  printf("char* = %s\n", cast(char*, listGet(list, 1)->address));
-  printf("double = %lf\n\n", *cast(double*, listGet(list, 2)->address));
-  printStudent(cast(Student*, listGet(list, 3)->address));
-  
-  freeList(list);
-  return 0;
-}
+#endif
