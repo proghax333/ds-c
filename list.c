@@ -63,10 +63,6 @@ void resizeBlockArray(List* list, uint64_t newSize) {
   }
 }
 
-double log2(double x) {
-  return log(x) / log(2);
-}
-
 void listInsert(List* list, void* data, uint64_t dataSize) {
   if(list) {
 //    printf("Data Size: %llu\n", dataSize);
