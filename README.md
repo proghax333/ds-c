@@ -1,2 +1,2 @@
 # ds-c
-Having fun with custom data structures in C.
+Having fun with custom list data structures in C.
